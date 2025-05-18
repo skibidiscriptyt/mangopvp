@@ -52,6 +52,20 @@ RainbowLabel.Font = Enum.Font.GothamBlack
 RainbowLabel.TextScaled = true
 rainbowText(RainbowLabel)
 
+-- PvP Logic Loop
+local function startPvpLoop()
+    coroutine.wrap(function()
+        while _G.MangoPVP do
+            -- 💥 Replace this with actual PvP code
+            print("PvP active... attacking or scanning for players")
+
+            -- Example: Loop delay
+            task.wait(1)
+        end
+        print("PvP loop ended.")
+    end)()
+end
+
 -- Toggle Logic
 _G.MangoPVP = false
 ToggleBtn.MouseButton1Click:Connect(function()
@@ -59,10 +73,12 @@ ToggleBtn.MouseButton1Click:Connect(function()
     if _G.MangoPVP then
         ToggleBtn.Text = "MANGO PVP: ON"
         ToggleBtn.TextColor3 = Color3.new(1, 0, 0)
-        print("PvP is now ON - Start logic")
+        print("PvP is now ON")
+        startPvpLoop()
     else
         ToggleBtn.Text = "MANGO PVP: OFF"
         ToggleBtn.TextColor3 = Color3.new(1, 0, 0)
         print("PvP is now OFF")
+        -- Loop stops automatically due to condition
     end
 end)
