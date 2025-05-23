@@ -1,15 +1,4 @@
--- Mango PvP v1.3 by @SkibidiScript
-
--- Only works in Second or Third Sea
-local allowedPlaceIds = {
-    [4442272183] = true,  -- Second Sea
-    [7449423635] = true,  -- Third Sea
-}
-
-if not allowedPlaceIds[game.PlaceId] then
-    game.Players.LocalPlayer:Kick("Script only works in Sea 2,3")
-    return
-end
+-- Mango PvP v1.3 (All Seas Edition) by @SkibidiScript
 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
@@ -63,7 +52,7 @@ task.spawn(function()
 	end
 end)
 
--- PvP Logic
+-- PvP Toggle Logic
 local PvPEnabled = false
 toggle.MouseButton1Click:Connect(function()
 	PvPEnabled = not PvPEnabled
@@ -72,22 +61,26 @@ end)
 
 -- Server Hop Function
 local function hopServer()
-	local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
-	for _, server in pairs(servers.data) do
-		if server.playing < server.maxPlayers then
-			TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
-			break
+	local success, servers = pcall(function()
+		return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
+	end)
+	if success and servers and servers.data then
+		for _, server in pairs(servers.data) do
+			if server.playing < server.maxPlayers then
+				TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
+				break
+			end
 		end
 	end
 end
 
--- Attack Logic
+-- Attack Loop
 task.spawn(function()
 	while true do
 		if PvPEnabled then
 			local myChar = LocalPlayer.Character
 			local myHRP = myChar and myChar:FindFirstChild("HumanoidRootPart")
-			local myLevel = LocalPlayer:FindFirstChild("Data") and LocalPlayer.Data.Level.Value or 0
+			local myLevel = LocalPlayer:FindFirstChild("Data") and LocalPlayer.Data:FindFirstChild("Level") and LocalPlayer.Data.Level.Value or 0
 
 			local targetFound = false
 
